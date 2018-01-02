@@ -1,16 +1,80 @@
 package input
 
-import "reflect"
+import (
+	"reflect"
+)
 
 type Input struct {
-	DirectorUUID    string
-	InstanceGroups  []InstanceGroup
-	Update          UpdateConfig
-	CloudConfig     CloudConfig
-	Stemcells       []StemcellConfig
-	Variables       []Variable
-	AvailableErrand []string
-	IsDryRun        bool
+	DirectorUUID    string           `yaml:"director_uuid"`
+	InstanceGroups  []InstanceGroup  `yaml:"jobs"`
+	Update          UpdateConfig     `yaml:"update"`
+	CloudConfig     CloudConfig      `yaml:"-"`
+	Stemcells       []StemcellConfig `yaml:"stemcells,omitempty"`
+	Variables       []Variable       `yaml:"variables,omitempty"`
+	AvailableErrand []string         `yaml:"-"`
+	IsDryRun        bool             `yaml:"-"`
+}
+
+type output struct {
+	Name          string `yaml:"name"`
+	Input         `yaml:"-,inline"`
+	Releases      []ReleaseConfig      `yaml:"releases"`
+	DiskPools     []DiskConfig         `yaml:"disk_pools,omitempty"`
+	ResourcePools []ResourcePoolConfig `yaml:"resource_pools,omitempty"`
+	Networks      []NetworkConfig      `yaml:"networks,omitempty"`
+	Compilation   CompilationConfig    `yaml:"compilation,omitempty"`
+}
+
+func (i *Input) MarshalYAML() (interface{}, error) {
+	output := output{
+		Input: *i,
+		Name:  "foo-deployment",
+		Releases: []ReleaseConfig{
+			{
+				Name:    "foo-release",
+				Version: "latest",
+			},
+		},
+	}
+
+	output.Input.Update.CanaryWatchTime = 4000
+	output.Input.Update.UpdateWatchTime = 20
+
+	if len(i.CloudConfig.PersistentDiskPools) > 0 {
+		output.DiskPools = i.CloudConfig.PersistentDiskPools
+	}
+
+	if len(i.CloudConfig.ResourcePools) > 0 {
+		output.ResourcePools = i.CloudConfig.ResourcePools
+	}
+
+	if !i.IsV2() && len(i.CloudConfig.Networks) > 0 {
+		output.Networks = i.CloudConfig.Networks
+		i.CloudConfig.Networks = []NetworkConfig{}
+	}
+
+	if !i.IsV2() && i.CloudConfig.Compilation.Network != "" {
+		output.Compilation = i.CloudConfig.Compilation
+		i.CloudConfig.Compilation = CompilationConfig{}
+	}
+
+	for index := range i.InstanceGroups {
+		g := &i.InstanceGroups[index]
+
+		for index := range g.Jobs {
+			j := &g.Jobs[index]
+			j.Release = "foo-release"
+		}
+
+		for index := range g.Networks {
+			c := &g.Networks[index]
+			if c.DefaultDNSnGW {
+				c.Default = []string{"dns", "gateway"}
+			}
+		}
+	}
+
+	return output, nil
 }
 
 func (i *Input) IsV2() bool {
@@ -92,7 +156,7 @@ func (i Input) FindVmTypeByName(vmTypeName string) (VmTypeConfig, bool) {
 func (i Input) FindSubnetByIpRange(ipRange string) (SubnetConfig, bool) {
 	for _, network := range i.CloudConfig.Networks {
 		for _, subnet := range network.Subnets {
-			if subnet.IpPool != nil && subnet.IpPool.IpRange == ipRange {
+			if subnet.IpPool.IpRange == ipRange {
 				return subnet, true
 			}
 		}
@@ -110,20 +174,25 @@ func (i Input) FindStemcellByName(stemcellName string) (StemcellConfig, bool) {
 	return StemcellConfig{}, false
 }
 
+type ReleaseConfig struct {
+	Name    string
+	Version string
+}
+
 type CloudConfig struct {
-	AvailabilityZones   []AvailabilityZone
-	PersistentDiskPools []DiskConfig
-	PersistentDiskTypes []DiskConfig
-	Networks            []NetworkConfig
-	Compilation         CompilationConfig
-	VmTypes             []VmTypeConfig
-	ResourcePools       []ResourcePoolConfig
+	AvailabilityZones   []AvailabilityZone   `yaml:"azs,omitempty"`
+	PersistentDiskPools []DiskConfig         `yaml:"-"`
+	PersistentDiskTypes []DiskConfig         `yaml:"persistent_disk_types,omitempty"`
+	Networks            []NetworkConfig      `yaml:"networks,omitempty"`
+	Compilation         CompilationConfig    `yaml:"compilation,omitempty"`
+	VmTypes             []VmTypeConfig       `yaml:"vm_types,omitempty"`
+	ResourcePools       []ResourcePoolConfig `yaml:"-"`
 }
 
 type DiskConfig struct {
-	Name            string
-	Size            int
-	CloudProperties map[string]string
+	Name            string            `yaml:"name"`
+	Size            int               `yaml:"disk_size"`
+	CloudProperties map[string]string `yaml:"cloud_properties"`
 }
 
 func (d DiskConfig) IsEqual(other DiskConfig) bool {
@@ -131,15 +200,15 @@ func (d DiskConfig) IsEqual(other DiskConfig) bool {
 }
 
 type CompilationConfig struct {
-	Network          string
-	AvailabilityZone string
-	NumberOfWorkers  int
-	CloudProperties  map[string]string
+	Network          string            `yaml:"network,omitempty"`
+	AvailabilityZone string            `yaml:"az,omitempty"`
+	NumberOfWorkers  int               `yaml:"workers,omitempty"`
+	CloudProperties  map[string]string `yaml:"cloud_properties"`
 }
 
 type AvailabilityZone struct {
-	Name            string
-	CloudProperties map[string]string
+	Name            string            `yaml:"name"`
+	CloudProperties map[string]string `yaml:"cloud_properties"`
 }
 
 func (a AvailabilityZone) IsEqual(other AvailabilityZone) bool {
@@ -147,8 +216,8 @@ func (a AvailabilityZone) IsEqual(other AvailabilityZone) bool {
 }
 
 type VmTypeConfig struct {
-	Name            string
-	CloudProperties map[string]string
+	Name            string            `yaml:"name"`
+	CloudProperties map[string]string `yaml:"cloud_properties,omitempty"`
 }
 
 func (v VmTypeConfig) IsEqual(other VmTypeConfig) bool {
@@ -156,9 +225,9 @@ func (v VmTypeConfig) IsEqual(other VmTypeConfig) bool {
 }
 
 type ResourcePoolConfig struct {
-	Name            string
-	Stemcell        StemcellConfig
-	CloudProperties map[string]string
+	Name            string            `yaml:"name"`
+	Stemcell        StemcellConfig    `yaml:"stemcell"`
+	CloudProperties map[string]string `yaml:"cloud_properties,omitempty"`
 }
 
 func (r ResourcePoolConfig) IsEqual(other ResourcePoolConfig) bool {
@@ -166,16 +235,18 @@ func (r ResourcePoolConfig) IsEqual(other ResourcePoolConfig) bool {
 }
 
 type UpdateConfig struct {
-	Canaries    int
-	MaxInFlight int
-	Serial      string
+	Canaries        int   `yaml:"canaries"`
+	CanaryWatchTime int   `yaml:"canary_watch_time"`
+	MaxInFlight     int   `yaml:"max_in_flight"`
+	UpdateWatchTime int   `yaml:"update_watch_time"`
+	Serial          *bool `yaml:"serial,omitempty"`
 }
 
 type StemcellConfig struct {
-	Name    string
-	OS      string
-	Version string
-	Alias   string
+	Name    string `yaml:"name,omitempty"`
+	OS      string `yaml:"os"`
+	Version string `yaml:"version"`
+	Alias   string `yaml:"alias"`
 }
 
 func (s StemcellConfig) IsEqual(other StemcellConfig) bool {
@@ -183,10 +254,10 @@ func (s StemcellConfig) IsEqual(other StemcellConfig) bool {
 }
 
 type NetworkConfig struct {
-	Name            string
-	Type            string
-	Subnets         []SubnetConfig
-	CloudProperties map[string]string
+	Name            string            `yaml:"name"`
+	Type            string            `yaml:"type"`
+	Subnets         []SubnetConfig    `yaml:"subnets"`
+	CloudProperties map[string]string `yaml:"cloud_properties,omitempty"`
 }
 
 func (n NetworkConfig) IsEqual(other NetworkConfig) bool {
@@ -194,7 +265,8 @@ func (n NetworkConfig) IsEqual(other NetworkConfig) bool {
 }
 
 type SubnetConfig struct {
-	AvailabilityZones []string
-	IpPool            *IpPool
-	CloudProperties   map[string]string
+	AvailabilityZones []string          `yaml:"azs,omitempty"`
+	IpPool            IpPool            `yaml:"-,inline"`
+	DNS               []string          `yaml:"dns,omitempty"`
+	CloudProperties   map[string]string `yaml:"cloud_properties"`
 }

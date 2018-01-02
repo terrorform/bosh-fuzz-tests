@@ -59,14 +59,14 @@ func (c *cloudProperties) Apply(input bftinput.Input, previousInput bftinput.Inp
 	for i, network := range input.CloudConfig.Networks {
 		if network.Subnets != nil {
 			for s, subject := range network.Subnets {
-				if subject.IpPool != nil {
-					// manual
-					prevSubject, found := previousInput.FindSubnetByIpRange(subject.IpPool.IpRange)
-					input.CloudConfig.Networks[i].Subnets[s].CloudProperties = c.FuzzCloudProperties(found, prevSubject.CloudProperties)
-				} else {
-					// dynamic
-					input.CloudConfig.Networks[i].Subnets[s].CloudProperties = c.FuzzCloudProperties(false, map[string]string{})
-				}
+				// if subject.IpPool != nil {
+				// manual
+				prevSubject, found := previousInput.FindSubnetByIpRange(subject.IpPool.IpRange)
+				input.CloudConfig.Networks[i].Subnets[s].CloudProperties = c.FuzzCloudProperties(found, prevSubject.CloudProperties)
+				// } else {
+				// 	// dynamic
+				// 	input.CloudConfig.Networks[i].Subnets[s].CloudProperties = c.FuzzCloudProperties(false, map[string]string{})
+				// }
 			}
 		} else {
 			// vip

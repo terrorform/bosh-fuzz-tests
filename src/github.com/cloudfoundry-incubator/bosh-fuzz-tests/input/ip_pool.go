@@ -9,10 +9,10 @@ import (
 
 type IpPool struct {
 	prefix            string
-	IpRange           string
-	Gateway           string
-	Reserved          []string
-	Static            []string
+	IpRange           string   `yaml:"range,omitempty"`
+	Gateway           string   `yaml:"gateway,omitempty"`
+	Reserved          []string `yaml:"reserved,omitempty"`
+	Static            []string `yaml:"static,omitempty"`
 	staticIps         []int
 	reservedStaticIps map[string]bool
 }

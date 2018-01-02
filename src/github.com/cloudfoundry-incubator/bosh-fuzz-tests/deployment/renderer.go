@@ -1,12 +1,10 @@
 package deployment
 
 import (
-	"bytes"
-	"text/template"
-
 	bftinput "github.com/cloudfoundry-incubator/bosh-fuzz-tests/input"
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 	boshsys "github.com/cloudfoundry/bosh-utils/system"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type Renderer interface {
@@ -24,29 +22,22 @@ func NewRenderer(fs boshsys.FileSystem) Renderer {
 }
 
 func (g *renderer) Render(input bftinput.Input, manifestPath string, cloudConfigPath string) error {
-	deploymentTemplate := template.Must(template.New("deployment").Parse(DeploymentTemplate))
-
-	buffer := bytes.NewBuffer([]byte{})
-	err := deploymentTemplate.Execute(buffer, input)
+	manifest, err := yaml.Marshal(&input)
 	if err != nil {
 		return bosherr.WrapErrorf(err, "Generating deployment manifest")
 	}
 
-	err = g.fs.WriteFile(manifestPath, buffer.Bytes())
+	err = g.fs.WriteFile(manifestPath, manifest)
 	if err != nil {
 		return bosherr.WrapErrorf(err, "Saving generated manifest")
 	}
 
-	cloudTemplate := template.Must(template.New("cloud-config").Parse(CloudTemplate))
-
-	buffer = bytes.NewBuffer([]byte{})
-
-	err = cloudTemplate.Execute(buffer, input)
+	cloudConfig, err := yaml.Marshal(input.CloudConfig)
 	if err != nil {
 		return bosherr.WrapErrorf(err, "Generating cloud config")
 	}
 
-	err = g.fs.WriteFile(cloudConfigPath, buffer.Bytes())
+	err = g.fs.WriteFile(cloudConfigPath, cloudConfig)
 	if err != nil {
 		return bosherr.WrapErrorf(err, "Saving generated cloud config")
 	}

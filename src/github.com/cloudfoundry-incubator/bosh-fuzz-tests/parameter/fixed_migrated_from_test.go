@@ -36,11 +36,11 @@ var _ = Describe("FixedMigratedFrom", func() {
 								Subnets: []bftinput.SubnetConfig{
 									{
 										AvailabilityZones: []string{"z1"},
-										IpPool:            bftinput.NewIpPool("192.168.1", 1, []string{}),
+										IpPool:            *bftinput.NewIpPool("192.168.1", 1, []string{}),
 									},
 									{
 										AvailabilityZones: []string{"z2"},
-										IpPool:            bftinput.NewIpPool("192.168.2", 1, []string{}),
+										IpPool:            *bftinput.NewIpPool("192.168.2", 1, []string{}),
 									},
 								},
 							},
@@ -108,10 +108,10 @@ var _ = Describe("FixedMigratedFrom", func() {
 								Name: "foo-network",
 								Subnets: []bftinput.SubnetConfig{
 									{
-										IpPool: bftinput.NewIpPool("192.168.1", 1, []string{}),
+										IpPool: *bftinput.NewIpPool("192.168.1", 1, []string{}),
 									},
 									{
-										IpPool: bftinput.NewIpPool("192.168.2", 1, []string{}),
+										IpPool: *bftinput.NewIpPool("192.168.2", 1, []string{}),
 									},
 								},
 							},

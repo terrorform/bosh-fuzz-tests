@@ -16,7 +16,7 @@ func (s *FakeNetwork) Apply(input bftinput.Input, previousInput bftinput.Input) 
 			Name: "foo-network",
 			Subnets: []bftinput.SubnetConfig{
 				{
-					IpPool: &bftinput.IpPool{
+					IpPool: bftinput.IpPool{
 						IpRange: "10.0.0.0/24",
 					},
 				},

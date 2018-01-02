@@ -23,7 +23,7 @@ var _ = Describe("Manifest/Renderer", func() {
 		cloudConfigPath = "cloud-config-path"
 	})
 
-	It("creates manifest based on input values", func() {
+	FIt("creates manifest based on input values", func() {
 		input := bftinput.Input{
 			DirectorUUID: "d820eb0d-13db-4777-8c9b-7a9bc55e3628",
 			InstanceGroups: []bftinput.InstanceGroup{
@@ -111,7 +111,8 @@ var _ = Describe("Manifest/Renderer", func() {
 						Type: "manual",
 						Subnets: []bftinput.SubnetConfig{
 							{
-								IpPool: &bftinput.IpPool{
+								DNS: []string{"8.8.8.8"},
+								IpPool: bftinput.IpPool{
 									IpRange: "192.168.1.0/24",
 									Gateway: "192.168.1.254",
 									Reserved: []string{
@@ -135,7 +136,9 @@ var _ = Describe("Manifest/Renderer", func() {
 						Name: "no-az",
 						Type: "dynamic",
 						Subnets: []bftinput.SubnetConfig{
-							{},
+							{
+								DNS: []string{"8.8.8.8"},
+							},
 						},
 					},
 				},
@@ -185,7 +188,7 @@ name: foo-deployment
 director_uuid: d820eb0d-13db-4777-8c9b-7a9bc55e3628
 
 stemcells:
-- version: 1
+- version: "1"
   alias: default
   os: toronto-os
 
@@ -198,7 +201,7 @@ update:
   canary_watch_time: 4000
   max_in_flight: 3
   update_watch_time: 20
-  serial: true
+  serial: "true"
 
 jobs:
 - name: foo-instance-group
@@ -259,7 +262,7 @@ disk_pools:
 
 		manifestContents, err := fs.ReadFileString(manifestPath)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(manifestContents).To(Equal(expectedManifestContents))
+		Expect(manifestContents).To(MatchYAML(expectedManifestContents))
 
 		expectedCloudConfigContents := `---
 azs:
@@ -318,11 +321,11 @@ vm_types:
 
 		cloudConfigContents, err := fs.ReadFileString(cloudConfigPath)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(cloudConfigContents).To(Equal(expectedCloudConfigContents))
+		Expect(cloudConfigContents).To(MatchYAML(expectedCloudConfigContents))
 	})
 
 	Context("when AvailabilityZone is nil", func() {
-		It("does not specify az key in manifest", func() {
+		FIt("does not specify az key in manifest", func() {
 			input := bftinput.Input{
 				DirectorUUID: "d820eb0d-13db-4777-8c9b-7a9bc55e3628",
 				InstanceGroups: []bftinput.InstanceGroup{
@@ -338,7 +341,6 @@ vm_types:
 				Update: bftinput.UpdateConfig{
 					Canaries:    1,
 					MaxInFlight: 3,
-					Serial:      "not_specified",
 				},
 				CloudConfig: bftinput.CloudConfig{
 					Networks: []bftinput.NetworkConfig{
@@ -346,14 +348,18 @@ vm_types:
 							Name: "default",
 							Type: "manual",
 							Subnets: []bftinput.SubnetConfig{
-								{},
+								{
+									DNS: []string{"8.8.8.8"},
+								},
 							},
 						},
 						{
 							Name: "no-az",
 							Type: "dynamic",
 							Subnets: []bftinput.SubnetConfig{
-								{},
+								{
+									DNS: []string{"8.8.8.8"},
+								},
 							},
 						},
 					},
@@ -410,18 +416,18 @@ compilation:
 
 			manifestContents, err := fs.ReadFileString(manifestPath)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(manifestContents).To(Equal(expectedManifestContents))
+			Expect(manifestContents).To(MatchYAML(expectedManifestContents))
 
 			expectedCloudConfigContents := `--- {}
 `
 
 			cloudConfigContents, err := fs.ReadFileString(cloudConfigPath)
 			Expect(err).ToNot(HaveOccurred())
-			Expect(cloudConfigContents).To(Equal(expectedCloudConfigContents))
+			Expect(cloudConfigContents).To(MatchYAML(expectedCloudConfigContents))
 		})
 	})
 
-	It("uses the disk pool specified for instance group", func() {
+	FIt("uses the disk pool specified for instance group", func() {
 		input := bftinput.Input{
 			DirectorUUID: "d820eb0d-13db-4777-8c9b-7a9bc55e3628",
 			InstanceGroups: []bftinput.InstanceGroup{
@@ -452,14 +458,18 @@ compilation:
 						Name: "default",
 						Type: "manual",
 						Subnets: []bftinput.SubnetConfig{
-							{},
+							{
+								DNS: []string{"8.8.8.8"},
+							},
 						},
 					},
 					{
 						Name: "no-az",
 						Type: "dynamic",
 						Subnets: []bftinput.SubnetConfig{
-							{},
+							{
+								DNS: []string{"8.8.8.8"},
+							},
 						},
 					},
 				},
@@ -523,17 +533,17 @@ compilation:
 
 		manifestContents, err := fs.ReadFileString(manifestPath)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(manifestContents).To(Equal(expectedManifestContents))
+		Expect(manifestContents).To(MatchYAML(expectedManifestContents))
 
 		expectedCloudConfigContents := `--- {}
 `
 
 		cloudConfigContents, err := fs.ReadFileString(cloudConfigPath)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(cloudConfigContents).To(Equal(expectedCloudConfigContents))
+		Expect(cloudConfigContents).To(MatchYAML(expectedCloudConfigContents))
 	})
 
-	It("uses the disk type", func() {
+	FIt("uses the disk type", func() {
 		input := bftinput.Input{
 			DirectorUUID: "d820eb0d-13db-4777-8c9b-7a9bc55e3628",
 			InstanceGroups: []bftinput.InstanceGroup{
@@ -620,7 +630,7 @@ jobs:
 
 		manifestContents, err := fs.ReadFileString(manifestPath)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(manifestContents).To(Equal(expectedManifestContents))
+		Expect(manifestContents).To(MatchYAML(expectedManifestContents))
 
 		expectedCloudConfigContents := `---
 azs:
@@ -654,7 +664,7 @@ disk_types:
 
 		cloudConfigContents, err := fs.ReadFileString(cloudConfigPath)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(cloudConfigContents).To(Equal(expectedCloudConfigContents))
+		Expect(cloudConfigContents).To(MatchYAML(expectedCloudConfigContents))
 	})
 
 	It("uses the resource pool specified for instance group", func() {
@@ -736,7 +746,7 @@ update:
   canary_watch_time: 4000
   max_in_flight: 5
   update_watch_time: 20
-  serial: true
+  serial: "true"
 
 jobs:
 - name: foo-instance-group
@@ -783,13 +793,13 @@ compilation:
 
 		manifestContents, err := fs.ReadFileString(manifestPath)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(manifestContents).To(Equal(expectedManifestContents))
+		Expect(manifestContents).To(MatchYAML(expectedManifestContents))
 
 		expectedCloudConfigContents := `--- {}
 `
 
 		cloudConfigContents, err := fs.ReadFileString(cloudConfigPath)
 		Expect(err).ToNot(HaveOccurred())
-		Expect(cloudConfigContents).To(Equal(expectedCloudConfigContents))
+		Expect(cloudConfigContents).To(MatchYAML(expectedCloudConfigContents))
 	})
 })

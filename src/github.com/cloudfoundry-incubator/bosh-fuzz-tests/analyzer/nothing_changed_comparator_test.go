@@ -240,7 +240,7 @@ var _ = Describe("NothingChangedComparator", func() {
 								Name: "foo-network",
 								Subnets: []bftinput.SubnetConfig{
 									{
-										IpPool: &bftinput.IpPool{
+										IpPool: bftinput.IpPool{
 											IpRange: "192.168.0.0/24",
 										},
 									},
@@ -268,7 +268,7 @@ var _ = Describe("NothingChangedComparator", func() {
 							Name: "foo-network",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "192.168.10.0/24",
 									},
 								},
@@ -555,7 +555,7 @@ var _ = Describe("NothingChangedComparator", func() {
 				{
 					InstanceGroups: []bftinput.InstanceGroup{
 						{
-							Name:      "foo-instance-group",
+							Name: "foo-instance-group",
 						},
 					},
 				},
@@ -564,7 +564,7 @@ var _ = Describe("NothingChangedComparator", func() {
 			currentInput = bftinput.Input{
 				InstanceGroups: []bftinput.InstanceGroup{
 					{
-						Name:      "foo-instance-group",
+						Name: "foo-instance-group",
 					},
 				},
 				IsDryRun: true,

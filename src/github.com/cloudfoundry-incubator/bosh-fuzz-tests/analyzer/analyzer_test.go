@@ -28,7 +28,7 @@ var _ = Describe("Analyzer", func() {
 								Name: "foo-network",
 								Subnets: []bftinput.SubnetConfig{
 									{
-										IpPool: bftinput.NewIpPool("192.168.2", 1, []string{}),
+										IpPool: *bftinput.NewIpPool("192.168.2", 1, []string{}),
 									},
 								},
 							},
@@ -64,11 +64,11 @@ var _ = Describe("Analyzer", func() {
 								Subnets: []bftinput.SubnetConfig{
 									{
 										AvailabilityZones: []string{"z1"},
-										IpPool:            bftinput.NewIpPool("192.168.1", 1, []string{}),
+										IpPool:            *bftinput.NewIpPool("192.168.1", 1, []string{}),
 									},
 									{
 										AvailabilityZones: []string{"z2"},
-										IpPool:            bftinput.NewIpPool("192.168.2", 1, []string{}),
+										IpPool:            *bftinput.NewIpPool("192.168.2", 1, []string{}),
 									},
 								},
 							},
@@ -224,7 +224,7 @@ var _ = Describe("Analyzer", func() {
 	})
 
 	Context("when some of the inputs are dry-run", func() {
-		It("only considers non dry-run inputs when building expectations", func(){
+		It("only considers non dry-run inputs when building expectations", func() {
 			normalInput1 := bftinput.Input{
 				InstanceGroups: []bftinput.InstanceGroup{
 					{
@@ -268,7 +268,7 @@ var _ = Describe("Analyzer", func() {
 						Subnets: []bftinput.SubnetConfig{
 							{
 								AvailabilityZones: []string{"z1"},
-								IpPool:            bftinput.NewIpPool("192.168.2", 1, []string{}),
+								IpPool:            *bftinput.NewIpPool("192.168.2", 1, []string{}),
 							},
 						},
 					},
@@ -303,7 +303,7 @@ var _ = Describe("Analyzer", func() {
 						Subnets: []bftinput.SubnetConfig{
 							{
 								AvailabilityZones: []string{"z2"},
-								IpPool:            bftinput.NewIpPool("192.168.2", 1, []string{}),
+								IpPool:            *bftinput.NewIpPool("192.168.2", 1, []string{}),
 							},
 						},
 					},

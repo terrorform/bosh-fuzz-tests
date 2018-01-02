@@ -111,7 +111,7 @@ var _ = Describe("InputGenerator", func() {
 							Name: "foo-network",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{
@@ -230,7 +230,7 @@ var _ = Describe("InputGenerator", func() {
 							Name: "foo-network",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{
@@ -322,7 +322,7 @@ var _ = Describe("InputGenerator", func() {
 							Name: "foo-network",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{
@@ -421,7 +421,7 @@ var _ = Describe("InputGenerator", func() {
 							Name: "foo-network",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{
@@ -534,7 +534,7 @@ var _ = Describe("InputGenerator", func() {
 							Name: "foo-network",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{
@@ -616,7 +616,7 @@ var _ = Describe("InputGenerator", func() {
 							Name: "foo-network",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{

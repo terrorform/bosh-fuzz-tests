@@ -254,7 +254,7 @@ var _ = Describe("CloudProperties", func() {
 						{
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 								},
@@ -271,7 +271,7 @@ var _ = Describe("CloudProperties", func() {
 						{
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{
@@ -351,7 +351,7 @@ var _ = Describe("CloudProperties", func() {
 						{
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{
@@ -371,7 +371,7 @@ var _ = Describe("CloudProperties", func() {
 						{
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 								},
@@ -388,7 +388,7 @@ var _ = Describe("CloudProperties", func() {
 						{
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: &bftinput.IpPool{
+									IpPool: bftinput.IpPool{
 										IpRange: "10.0.0.0/24",
 									},
 									CloudProperties: map[string]string{

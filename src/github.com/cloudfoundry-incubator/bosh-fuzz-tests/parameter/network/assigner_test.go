@@ -58,7 +58,7 @@ var _ = Describe("NetworksAssigner", func() {
 		networksAssigner = NewAssigner(networks, nameGenerator, ipPoolProvider, decider, logger)
 	})
 
-	It("assigns network of the given type to instance group and cloud config", func() {
+	FIt("assigns network of the given type to instance group and cloud config", func() {
 		input := bftinput.Input{
 			InstanceGroups: []bftinput.InstanceGroup{
 				{
@@ -101,7 +101,7 @@ var _ = Describe("NetworksAssigner", func() {
 						Type: "manual",
 						Subnets: []bftinput.SubnetConfig{
 							{
-								IpPool:            expectedIpPool,
+								IpPool:            *expectedIpPool,
 								AvailabilityZones: []string{"z1"},
 							},
 						},
@@ -115,7 +115,7 @@ var _ = Describe("NetworksAssigner", func() {
 						Type: "manual",
 						Subnets: []bftinput.SubnetConfig{
 							{
-								IpPool: expectedIpPool,
+								IpPool: *expectedIpPool,
 							},
 						},
 					},
@@ -190,7 +190,7 @@ var _ = Describe("NetworksAssigner", func() {
 							Type: "manual",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool:            expectedIpPool,
+									IpPool:            *expectedIpPool,
 									AvailabilityZones: []string{"z1"},
 								},
 							},
@@ -204,7 +204,7 @@ var _ = Describe("NetworksAssigner", func() {
 							Type: "manual",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: expectedIpPool,
+									IpPool: *expectedIpPool,
 								},
 							},
 						},
@@ -243,7 +243,7 @@ var _ = Describe("NetworksAssigner", func() {
 						Type: "manual",
 						Subnets: []bftinput.SubnetConfig{
 							{
-								IpPool: bftinput.NewIpPool("192.168.0", 1, []string{}),
+								IpPool: *bftinput.NewIpPool("192.168.0", 1, []string{}),
 							},
 						},
 					},
@@ -271,7 +271,7 @@ var _ = Describe("NetworksAssigner", func() {
 						Type: "manual",
 						Subnets: []bftinput.SubnetConfig{
 							{
-								IpPool: bftinput.NewIpPool("192.168.4", 1, []string{}),
+								IpPool: *bftinput.NewIpPool("192.168.4", 1, []string{}),
 							},
 						},
 					},
@@ -330,7 +330,7 @@ var _ = Describe("NetworksAssigner", func() {
 							Type: "manual",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: expectedIpPool,
+									IpPool: *expectedIpPool,
 								},
 							},
 						},
@@ -372,7 +372,7 @@ var _ = Describe("NetworksAssigner", func() {
 							Type: "manual",
 							Subnets: []bftinput.SubnetConfig{
 								{
-									IpPool: expectedIpPool,
+									IpPool: *expectedIpPool,
 								},
 							},
 						},

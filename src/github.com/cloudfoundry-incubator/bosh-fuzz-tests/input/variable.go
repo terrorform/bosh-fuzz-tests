@@ -3,9 +3,9 @@ package input
 import "reflect"
 
 type Variable struct {
-	Name    string
-	Type    string
-	Options map[string]interface{}
+	Name    string                 `yaml:"name"`
+	Type    string                 `yaml:"type"`
+	Options map[string]interface{} `yaml:"options,omitempty"`
 }
 
 func (v Variable) IsEqual(other Variable) bool {

@@ -233,7 +233,7 @@ func (n *assigner) assignStaticIps(networks []bftinput.NetworkConfig, instanceGr
 			for s, _ := range network.Subnets {
 				ipPool := n.ipPoolProvider.NewIpPool(instanceGroupsOnNetwork.TotalInstances)
 				ipRangeToStaticIps.ReserveStaticIpsInPool(ipPool)
-				networks[k].Subnets[s].IpPool = ipPool
+				networks[k].Subnets[s].IpPool = *ipPool
 			}
 
 			for _, instanceGroup := range instanceGroupsOnNetwork.InstanceGroups {
@@ -321,7 +321,7 @@ func (n *assigner) getInstanceGroupStaticIpsToReuse(previousInput bftinput.Input
 	return shuffledStaticIps
 }
 
-func (n *assigner) findIpPoolWithInstanceGroupAZ(subnets []bftinput.SubnetConfig, azs []string) (*bftinput.IpPool, bool) {
+func (n *assigner) findIpPoolWithInstanceGroupAZ(subnets []bftinput.SubnetConfig, azs []string) (bftinput.IpPool, bool) {
 	shuffledSubnetIdxs := rand.Perm(len(subnets))
 	shuffledSubnets := []bftinput.SubnetConfig{}
 	for _, i := range shuffledSubnetIdxs {
@@ -342,5 +342,5 @@ func (n *assigner) findIpPoolWithInstanceGroupAZ(subnets []bftinput.SubnetConfig
 		}
 	}
 
-	return &bftinput.IpPool{}, false
+	return bftinput.IpPool{}, false
 }
